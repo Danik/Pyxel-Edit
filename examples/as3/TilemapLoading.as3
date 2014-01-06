@@ -1,0 +1,52 @@
+package {
+	import flash.display.Sprite;
+	import flash.filesystem.File;
+	import flash.filesystem.FileMode;
+	import flash.filesystem.FileStream;
+	import flash.utils.ByteArray;
+	/**
+	 * An example that shows how to load an exported json tilemap file in as3.
+	 * @author Daniel Kvarfordt
+	 */
+	public class TilemapLoading extends Sprite {
+		
+		public function TilemapLoading() {
+			loadMap("tilemap.json");
+		}
+		
+		public static function loadMap(filename:String):void {
+			var mapFile:File = File.applicationDirectory.resolvePath(filename);
+			var fileStream:FileStream = new FileStream();
+			var bytes:ByteArray = new ByteArray();
+			fileStream.open(mapFile, FileMode.READ);
+			fileStream.readBytes(bytes);
+		   
+			var mapObj:Object = JSON.parse(bytes.readUTFBytes(bytes.length));
+		   
+			var tilesWide:int = mapObj.tileswide;
+			var tilesHigh:int = mapObj.tileshigh;
+			var tileWidth:int = mapObj.tilewidth;
+			var tileHeight:int = mapObj.tileheight;
+		   
+			// Initialize your tilemap data structure here
+		   
+			var layersObj:Object = mapObj.layers;
+			for each (var layerObj:Object in layersObj) {
+				var layerNumber:int = layerObj.number;
+				var layerName:String = layerObj.name;
+				var layerTiles:Object = layerObj.tiles;
+				for each (var tileObj:Object in layerTiles) {
+					var x:int = tileObj.x;
+					var y:int = tileObj.y;
+					var tileIndex:int = tileObj.tile;
+					var flipX:Boolean = tileObj.flipX;
+					var rot:int = tileObj.rot;
+				   
+					// Create/set the tile in the tilemap here
+					trace("Tile:", tileIndex, "at", x, ",", y, "flip:", flipX, "rot:", rot);
+				}
+			}
+		}
+
+	}
+}
